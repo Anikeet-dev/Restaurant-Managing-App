@@ -21,18 +21,17 @@ function onSubmit(e) {
             tableNumber: tableNumber.value
         };
 
-        axios.post("https://crudcrud.com/api/73e65c770f2d44499ba4196dbe1382df/orderData", orderDetails)
+        axios.post("https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData", orderDetails)
             .then((response) => {
                 const responseData = response.data;
-                const order = document.createElement('li');
-
-                order.innerHTML =
-                    responseData.price + ' - ' +
-                    responseData.discription + '-' +
-                    responseData.tableNumber;
+                const order = {
+                    _id: responseData._id,
+                    price: responseData.price,
+                    discription: responseData.discription,
+                    tableNumber: responseData.tableNumber
+                };
 
                 showOrder(order);
-
                 clearInputs();
             })
             .catch((err) => {
@@ -42,7 +41,7 @@ function onSubmit(e) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    axios.get("https://crudcrud.com/api/73e65c770f2d44499ba4196dbe1382df/orderData")
+    axios.get("https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData")
         .then((response) => {
             console.log(response)
 
@@ -87,7 +86,7 @@ function showOrder(orderData) {
 }
 
 function deleteOrder(orderId) {
-    axios.delete(`https://crudcrud.com/api/73e65c770f2d44499ba4196dbe1382df/orderData/${orderId}`)
+    axios.delete(`https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData/${orderId}`)
         .then((response) => {
             console.log(`Order with ID ${orderId} deleted successfully.`);
         })
