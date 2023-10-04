@@ -3,13 +3,13 @@ const price = document.querySelector('#price-text');
 const discription = document.querySelector('#discription-text');
 const tableNumber = document.querySelector('#table-Number');
 const orderButton = document.querySelector('#add-order');
-const table1 =  document.querySelector('#table1');
-const table2 =  document.querySelector('#table2');
-const table3 =  document.querySelector('#table3');
+const table1 = document.querySelector('#table1');
+const table2 = document.querySelector('#table2');
+const table3 = document.querySelector('#table3');
 
 myForm.addEventListener('submit', onSubmit);
 
-function onSubmit(e) {
+async function onSubmit(e) {
     e.preventDefault();
 
     if (price.value === '' && discription.value === '' && tableNumber.value === '') {
@@ -21,39 +21,35 @@ function onSubmit(e) {
             tableNumber: tableNumber.value
         };
 
-        axios.post("https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData", orderDetails)
-            .then((response) => {
-                const responseData = response.data;
-                const order = {
-                    _id: responseData._id,
-                    price: responseData.price,
-                    discription: responseData.discription,
-                    tableNumber: responseData.tableNumber
-                };
+        try {
+            const response = await axios.post("https://crudcrud.com/api/f0dd9a2e3bbd452b99959a67c2bccca7/orderData", orderDetails);
+            const responseData = response.data;
 
-                showOrder(order);
-                clearInputs();
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+            const order = {
+                _id: responseData._id,
+                discription: responseData.discription,
+                tableNumber: responseData.tableNumber
+            };
+
+            showOrder(order);
+            clearInputs();
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-    axios.get("https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData")
-        .then((response) => {
-            console.log(response)
+window.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await axios.get("https://crudcrud.com/api/f0dd9a2e3bbd452b99959a67c2bccca7/orderData");
 
-            for (var i = 0; i < response.data.length; i++) {
-                showOrder(response.data[i]);
-            }
-            
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-})
+        for (let i = 0; i < response.data.length; i++) {
+            showOrder(response.data[i]);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 function showOrder(orderData) {
     const { _id, price, discription, tableNumber } = orderData;
@@ -63,11 +59,15 @@ function showOrder(orderData) {
 
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete Order';
-    deleteButton.className = 'btn btn-danger btn-sm'; 
+    deleteButton.className = 'btn btn-danger btn-sm';
 
-    deleteButton.addEventListener('click', () => {
-        deleteOrder(_id);
-        order.remove();
+    deleteButton.addEventListener('click', async () => {
+        try {
+            await deleteOrder(_id);
+            order.remove();
+        } catch (error) {
+            console.log(error);
+        }
     });
 
     order.appendChild(deleteButton);
@@ -85,19 +85,17 @@ function showOrder(orderData) {
     }
 }
 
-function deleteOrder(orderId) {
-    axios.delete(`https://crudcrud.com/api/2767c5679a0f45ad8737d996874bbb09/orderData/${orderId}`)
-        .then((response) => {
-            console.log(`Order with ID ${orderId} deleted successfully.`);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+async function deleteOrder(orderId) {
+    try {
+        await axios.delete(`https://crudcrud.com/api/f0dd9a2e3bbd452b99959a67c2bccca7/orderData/${orderId}`);
+        console.log(`Order with ID ${orderId} deleted successfully.`);
+    } catch (error) {
+        console.log(error);
+    }
 }
-
 
 function clearInputs() {
     price.value = '';
-    discription.value = ''
+    discription.value = '';
     tableNumber.value = '';
 }
